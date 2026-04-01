@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Architect Mini</title>
+  <link rel="icon" type="image/png" href="assets/amlogo.png" />
   <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
@@ -77,28 +78,15 @@
             <div class="am-card-bg">
               <img class="am-card-bg-image" src="assets/business-card-front-bg.png" alt="" aria-hidden="true" />
             </div>
-            <div class="am-card-content am-card-content--front">
-              <div class="am-card-front-header">
-                <p class="am-card-name">
-                  <strong id="previewFirstName">KIM</strong>
-                  <span id="previewLastName"> LOU WAN</span>
-                </p>
-                <p class="am-card-title" id="previewTitle">Managing Director</p>
-              </div>
-              <div class="am-card-contact am-card-contact--front">
-                <div class="am-card-contact-row">
-                  <span id="previewEmail">info@creativedevelopers.com</span>
-                </div>
-                <div class="am-card-contact-row">
-                  <span id="previewPhone">(987)-4575-9567</span>
-                </div>
-                <div class="am-card-contact-row">
-                  <span id="previewWebsiteFront">www.creativedevelopers.com</span>
-                </div>
-                <div class="am-card-contact-row">
-                  <span id="previewAddress">132 9th Street, Lakeview Lane NY 87903</span>
-                </div>
-              </div>
+            <div class="am-card-content">
+              <p class="am-card-layer am-card-layer--text am-card-name" id="layer-frontName" data-layer-id="frontName">
+                <strong id="previewFirstName">KIM</strong><span id="previewLastName"> LOU WAN</span>
+              </p>
+              <p class="am-card-layer am-card-layer--text am-card-title" id="layer-frontTitle" data-layer-id="frontTitle">Managing Director</p>
+              <p class="am-card-layer am-card-layer--text am-card-contact-row" id="layer-frontEmail" data-layer-id="frontEmail">info@creativedevelopers.com</p>
+              <p class="am-card-layer am-card-layer--text am-card-contact-row" id="layer-frontPhone" data-layer-id="frontPhone">(987)-4575-9567</p>
+              <p class="am-card-layer am-card-layer--text am-card-contact-row" id="layer-frontWebsite" data-layer-id="frontWebsite">www.creativedevelopers.com</p>
+              <p class="am-card-layer am-card-layer--text am-card-contact-row" id="layer-frontAddress" data-layer-id="frontAddress">132 9th Street, Lakeview Lane NY 87903</p>
             </div>
           </div>
           <div class="am-card-label">Front Side</div>
@@ -107,16 +95,17 @@
             <div class="am-card-bg">
               <img class="am-card-bg-image" src="assets/business-card-back-bg.png" alt="" aria-hidden="true" />
             </div>
-            <div class="am-card-back-content">
-              <div class="am-card-back-logo" id="previewLogoBack">
-                <svg class="am-logo-placeholder am-logo-placeholder--back" viewBox="0 0 60 60" fill="none">
-                  <path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"/>
-                  <path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"/>
-                </svg>
+            <div class="am-card-content">
+              <div class="am-card-layer am-card-layer--logo am-card-back-logo" id="layer-backLogo" data-layer-id="backLogo">
+                <div id="previewLogoBack">
+                  <svg class="am-logo-placeholder am-logo-placeholder--back" viewBox="0 0 60 60" fill="none">
+                    <path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"/>
+                    <path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"/>
+                  </svg>
+                </div>
               </div>
-              <p class="am-card-back-company" id="previewBackCompany">CREATIVE DEVELOPERS</p>
-              <p class="am-card-back-tagline" id="previewBackTagline">Ideas Developed By Creative Experts!</p>
-              <p class="am-card-back-website" id="previewWebsite">www.creativedevelopers.com</p>
+              <p class="am-card-layer am-card-layer--text am-card-back-company" id="layer-backCompany" data-layer-id="backCompany">CREATIVE DEVELOPERS</p>
+              <p class="am-card-layer am-card-layer--text am-card-back-tagline" id="layer-backTagline" data-layer-id="backTagline">Ideas Developed By Creative Experts!</p>
             </div>
           </div>
           <div class="am-card-label">Back Side</div>
@@ -156,35 +145,57 @@
           </div>
         </div>
 
+        <div class="am-field-group am-layer-controls">
+          <label class="am-label" for="selectedLayerName">Selected Layer</label>
+          <input class="am-input" id="selectedLayerName" type="text" value="" readonly />
+          <p class="am-layer-hint">Click and drag text or the logo on the card to move it.</p>
+        </div>
+
+        <div class="am-field-group">
+          <label class="am-label">Position</label>
+          <div class="am-inline-grid">
+            <input class="am-input" id="layerPosX" type="number" step="1" placeholder="X" />
+            <input class="am-input" id="layerPosY" type="number" step="1" placeholder="Y" />
+          </div>
+        </div>
+
+        <div class="am-field-group">
+          <label class="am-label">Typography</label>
+          <div class="am-inline-grid">
+            <input class="am-input" id="layerFontSize" type="number" step="0.25" min="1" placeholder="Size (pt)" />
+            <input class="am-color-input" id="layerColor" type="color" value="#113D6E" />
+          </div>
+        </div>
+
         <div class="am-field-group">
           <label class="am-label" for="fieldFirstName">First Name</label>
-          <input class="am-input" id="fieldFirstName" type="text" placeholder="First Name" data-preview="previewFirstName" />
+          <input class="am-input" id="fieldFirstName" type="text" placeholder="First Name" />
         </div>
 
         <div class="am-field-group">
           <label class="am-label" for="fieldLastName">Last Name</label>
-          <input class="am-input" id="fieldLastName" type="text" placeholder="Last Name" data-preview="previewLastName" />
+          <input class="am-input" id="fieldLastName" type="text" placeholder="Last Name" />
         </div>
 
         <div class="am-field-group am-field-group--half">
           <label class="am-label" for="fieldTitle">Title</label>
-          <input class="am-input" id="fieldTitle" type="text" placeholder="Title" data-preview="previewTitle" />
+          <input class="am-input" id="fieldTitle" type="text" placeholder="Title" />
         </div>
 
         <div class="am-field-group">
           <label class="am-label" for="fieldPhone">Phone Number</label>
-          <input class="am-input" id="fieldPhone" type="tel" placeholder="(888)-888-8888" data-preview="previewPhone" />
+          <input class="am-input" id="fieldPhone" type="tel" placeholder="(888)-888-8888" />
         </div>
 
         <div class="am-field-group">
           <label class="am-label" for="fieldEmail">Email</label>
-          <input class="am-input" id="fieldEmail" type="email" placeholder="email@example.com" data-preview="previewEmail" />
+          <input class="am-input" id="fieldEmail" type="email" placeholder="email@example.com" />
         </div>
 
         <div class="am-field-group">
           <label class="am-label" for="fieldAddress">Address</label>
           <div class="am-select-wrapper">
-            <select class="am-select" id="fieldAddress" data-preview="previewAddress">
+            <select class="am-select" id="fieldAddress">
               <option value="">Select an address...</option>
               <option value="132 9th Street, Lakeview Lane NY 87903">132 9th Street, Lakeview Lane NY 87903</option>
               <option value="200 Park Ave, New York NY 10001">200 Park Ave, New York NY 10001</option>
@@ -198,17 +209,17 @@
 
         <div class="am-field-group">
           <label class="am-label" for="fieldCompany">Company Name</label>
-          <input class="am-input" id="fieldCompany" type="text" placeholder="Company Name" data-preview="previewCompany" />
+          <input class="am-input" id="fieldCompany" type="text" placeholder="Company Name" />
         </div>
 
         <div class="am-field-group">
           <label class="am-label" for="fieldTagline">Tagline</label>
-          <input class="am-input" id="fieldTagline" type="text" placeholder="Your tagline here" data-preview="previewTagline" />
+          <input class="am-input" id="fieldTagline" type="text" placeholder="Your tagline here" />
         </div>
 
         <div class="am-field-group">
           <label class="am-label" for="fieldWebsite">Website</label>
-          <input class="am-input" id="fieldWebsite" type="text" placeholder="www.yoursite.com" data-preview="previewWebsiteFront" />
+          <input class="am-input" id="fieldWebsite" type="text" placeholder="www.yoursite.com" />
         </div>
 
         <div class="am-field-group">
