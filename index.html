@@ -16,12 +16,7 @@
 
       <header class="am-header">
         <div class="am-logo">
-          <span class="am-logo-am">am</span>
-          <svg class="am-logo-mark" viewBox="0 0 18 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 0L18 10H0L9 0Z" fill="currentColor"/>
-            <path d="M9 26L0 16H18L9 26Z" fill="currentColor" opacity="0.45"/>
-          </svg>
-          <span class="am-logo-sub">ARCHITECT MINI</span>
+          <img src="assets/amlogo.png" alt="Architect Mini logo" class="am-logo-image" />
         </div>
       </header>
 
@@ -52,45 +47,29 @@
           <!-- FRONT CARD -->
           <div class="am-card am-card--front" id="cardFront">
             <div class="am-card-bg">
-              <div class="am-bg-shape am-bg-shape--dark"></div>
-              <div class="am-bg-shape am-bg-shape--teal-triangle"></div>
-              <div class="am-bg-shape am-bg-shape--teal-right"></div>
+              <img class="am-card-bg-image" src="assets/business-card-front-bg.png" alt="" aria-hidden="true" />
             </div>
-            <div class="am-card-content">
-              <div class="am-card-left">
+            <div class="am-card-content am-card-content--front">
+              <div class="am-card-front-header">
                 <p class="am-card-name">
                   <strong id="previewFirstName">KIM</strong>
                   <span id="previewLastName"> LOU WAN</span>
                 </p>
                 <p class="am-card-title" id="previewTitle">Managing Director</p>
-                <div class="am-card-divider"></div>
-                <div class="am-card-contact">
-                  <div class="am-card-contact-row">
-                    <svg class="am-icon" viewBox="0 0 16 16"><path d="M2 2.5C2 1.7 2.7 1 3.5 1h1.6c.35 0 .65.23.74.56l.7 2.8a.75.75 0 0 1-.21.74L5.1 6.35a9.04 9.04 0 0 0 4.55 4.55l1.25-1.25a.75.75 0 0 1 .74-.21l2.8.7c.33.09.56.39.56.74V12.5c0 .83-.67 1.5-1.5 1.5C6.6 14 2 9.4 2 3.5v-1Z" fill="white"/></svg>
-                    <span id="previewPhone">(987)-4575-9567</span>
-                  </div>
-                  <div class="am-card-contact-row am-card-contact-row--indent">
-                    <span id="previewPhone2">8365-9686-6997</span>
-                  </div>
-                  <div class="am-card-contact-row">
-                    <svg class="am-icon" viewBox="0 0 16 16"><path d="M8 1a4.5 4.5 0 0 0-4.5 4.5C3.5 9.5 8 15 8 15s4.5-5.5 4.5-9.5A4.5 4.5 0 0 0 8 1Zm0 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" fill="white"/></svg>
-                    <span id="previewAddress">132 9th Street, Lakeview Lane NY 87903</span>
-                  </div>
-                  <div class="am-card-contact-row">
-                    <svg class="am-icon" viewBox="0 0 16 16"><path d="M2 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4Zm1 0v.217l5 3.334 5-3.334V4H3Zm10 1.383-4.72 3.147a.5.5 0 0 1-.56 0L3 5.383V12h10V5.383Z" fill="white"/></svg>
-                    <span id="previewEmail">info@creativedevelopers.com</span>
-                  </div>
-                </div>
               </div>
-              <div class="am-card-right">
-                <div class="am-card-logo-area" id="previewLogoFront">
-                  <svg class="am-logo-placeholder" viewBox="0 0 60 60" fill="none">
-                    <path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"/>
-                    <path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"/>
-                  </svg>
+              <div class="am-card-contact am-card-contact--front">
+                <div class="am-card-contact-row">
+                  <span id="previewEmail">info@creativedevelopers.com</span>
                 </div>
-                <p class="am-card-company" id="previewCompany">CREATIVE DEVELOPERS</p>
-                <p class="am-card-tagline" id="previewTagline">Ideas Developed By Creative Experts!</p>
+                <div class="am-card-contact-row">
+                  <span id="previewPhone">(987)-4575-9567</span>
+                </div>
+                <div class="am-card-contact-row">
+                  <span id="previewWebsiteFront">www.creativedevelopers.com</span>
+                </div>
+                <div class="am-card-contact-row">
+                  <span id="previewAddress">132 9th Street, Lakeview Lane NY 87903</span>
+                </div>
               </div>
             </div>
           </div>
@@ -98,9 +77,8 @@
 
           <!-- BACK CARD -->
           <div class="am-card am-card--back" id="cardBack">
-            <div class="am-card-bg am-card-bg--back">
-              <div class="am-bg-shape am-bg-shape--back-teal-left"></div>
-              <div class="am-bg-shape am-bg-shape--back-teal-bottom"></div>
+            <div class="am-card-bg">
+              <img class="am-card-bg-image" src="assets/business-card-back-bg.png" alt="" aria-hidden="true" />
             </div>
             <div class="am-card-back-content">
               <div class="am-card-back-logo" id="previewLogoBack">
@@ -186,7 +164,7 @@
 
         <div class="am-field-group">
           <label class="am-label" for="fieldWebsite">Website</label>
-          <input class="am-input" id="fieldWebsite" type="text" placeholder="www.yoursite.com" data-preview="previewWebsite" />
+          <input class="am-input" id="fieldWebsite" type="text" placeholder="www.yoursite.com" data-preview="previewWebsiteFront" />
         </div>
 
         <div class="am-field-group">

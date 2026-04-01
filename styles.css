@@ -69,34 +69,13 @@ body {
 .am-logo {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
 }
 
-.am-logo-am {
-  font-family: var(--font-head);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--navy);
-  line-height: 1;
-}
-
-.am-logo-mark {
-  width: 14px;
-  height: 20px;
-  color: var(--navy);
-  margin-top: -2px;
-}
-
-.am-logo-sub {
-  font-family: var(--font-body);
-  font-size: 0.58rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  color: var(--muted);
-  text-transform: uppercase;
-  align-self: flex-end;
-  padding-bottom: 4px;
+.am-logo-image {
+  display: block;
+  width: 126px;
+  max-width: 100%;
+  height: auto;
 }
 
 /* Design name bar */
@@ -210,138 +189,73 @@ body {
 .am-card-bg {
   position: absolute;
   inset: 0;
-  background: var(--navy);
 }
 
-/* Front card shapes */
-.am-bg-shape { position: absolute; }
-
-.am-bg-shape--dark {
-  left: 0; top: 0;
-  width: 62%;
+.am-card-bg-image {
+  display: block;
+  width: 100%;
   height: 100%;
-  background: var(--navy);
-  clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
-  z-index: 1;
-}
-
-.am-bg-shape--teal-triangle {
-  right: 0; bottom: 0;
-  width: 50%;
-  height: 60%;
-  background: var(--teal);
-  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-  z-index: 2;
-}
-
-.am-bg-shape--teal-right {
-  right: 0; top: 0;
-  width: 42%;
-  height: 100%;
-  background: #0E1E3A;
-  clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
-  z-index: 1;
-}
-
-/* Back card shapes */
-.am-card-bg--back { background: var(--navy); }
-
-.am-bg-shape--back-teal-left {
-  left: 0; top: 0;
-  width: 50%;
-  height: 100%;
-  background: var(--teal);
-  clip-path: polygon(0 0, 70% 0, 50% 100%, 0 100%);
-  z-index: 1;
-}
-
-.am-bg-shape--back-teal-bottom {
-  left: 0; bottom: 0;
-  width: 50%;
-  height: 50%;
-  background: #00A5A5;
-  clip-path: polygon(0 50%, 55% 0, 55% 100%, 0 100%);
-  z-index: 2;
+  object-fit: cover;
 }
 
 /* Front card content */
 .am-card-content {
   position: relative;
   z-index: 10;
-  display: flex;
-  justify-content: space-between;
   height: 100%;
-  padding: 18px 20px 18px 22px;
 }
 
-.am-card-left {
+.am-card-content--front {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 3px;
-  max-width: 55%;
+  justify-content: flex-start;
+  padding: 31px 28px 26px 31px;
+}
+
+.am-card-front-header {
+  max-width: 80%;
 }
 
 .am-card-name {
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: white;
-  line-height: 1.3;
-  letter-spacing: 0.04em;
+  font-size: 1.02rem;
+  font-weight: 400;
+  color: #113D6E;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
 .am-card-name strong {
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .am-card-title {
-  font-size: 0.62rem;
-  color: white;
-  opacity: 0.85;
-  margin-bottom: 4px;
-  font-weight: 300;
-  letter-spacing: 0.03em;
+  font-size: 0.44rem;
+  color: #131313;
+  margin-top: 0.18rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-.am-card-divider {
-  width: 28px;
-  height: 2px;
-  background: var(--teal);
-  margin: 3px 0 6px;
-  border-radius: 1px;
+.am-card-contact {
+  display: flex;
+  flex-direction: column;
 }
 
-.am-card-contact { display: flex; flex-direction: column; gap: 4px; }
+.am-card-contact--front {
+  margin-top: 2.4rem;
+  margin-left: 3.55rem;
+  gap: 0.72rem;
+  max-width: 250px;
+}
 
 .am-card-contact-row {
   display: flex;
-  align-items: flex-start;
-  gap: 5px;
-  font-size: 0.55rem;
-  color: white;
-  opacity: 0.88;
-  line-height: 1.35;
-  font-weight: 300;
-}
-
-.am-card-contact-row--indent { padding-left: 19px; margin-top: -5px; }
-
-.am-icon {
-  width: 10px;
-  height: 10px;
-  flex-shrink: 0;
-  margin-top: 1px;
-  opacity: 0.9;
-}
-
-/* Right side of front card */
-.am-card-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-start;
-  gap: 4px;
-  padding-top: 4px;
+  align-items: center;
+  font-size: 0.35rem;
+  color: #131313;
+  line-height: 1.15;
+  font-weight: 400;
 }
 
 .am-card-logo-area {
@@ -363,23 +277,24 @@ body {
 .am-logo-placeholder { width: 48px; height: 48px; }
 
 .am-card-company {
-  font-size: 0.58rem;
-  color: white;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-align: right;
+  font-size: 0.72rem;
+  color: #113D6E;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .am-card-company span { color: var(--teal); }
 
 .am-card-tagline {
-  font-size: 0.48rem;
-  color: white;
-  opacity: 0.7;
-  text-align: right;
-  font-weight: 300;
-  max-width: 120px;
-  line-height: 1.4;
+  font-size: 0.28rem;
+  color: #113D6E;
+  opacity: 0.8;
+  text-align: center;
+  font-weight: 500;
+  max-width: 150px;
+  line-height: 1.3;
 }
 
 /* Back card content */
@@ -391,12 +306,13 @@ body {
   align-items: center;
   justify-content: center;
   height: 100%;
-  gap: 5px;
+  gap: 0.35rem;
+  padding: 0 2rem 1rem;
 }
 
 .am-card-back-logo {
-  width: 56px;
-  height: 56px;
+  width: 62px;
+  height: 62px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -405,27 +321,24 @@ body {
 .am-logo-placeholder--back { width: 52px; height: 52px; }
 
 .am-card-back-company {
-  font-size: 0.72rem;
-  color: white;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 0.86rem;
+  color: #113D6E;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .am-card-back-tagline {
-  font-size: 0.52rem;
-  color: white;
+  font-size: 0.3rem;
+  color: #113D6E;
   opacity: 0.75;
   text-align: center;
-  font-weight: 300;
+  font-weight: 500;
 }
 
 .am-card-back-website {
-  font-size: 0.55rem;
-  color: var(--teal);
-  margin-top: 4px;
-  letter-spacing: 0.04em;
-  font-weight: 400;
+  display: none;
 }
 
 /* Pagination */
@@ -638,4 +551,17 @@ body {
   .am-right { flex: none; border-top: 1px solid var(--border); }
   .am-field-group--half { max-width: 100%; }
   .am-card { width: 320px; height: 179px; }
+  .am-card-content--front { padding: 26px 22px 22px 26px; }
+  .am-card-name { font-size: 0.86rem; }
+  .am-card-title { font-size: 0.38rem; }
+  .am-card-contact--front {
+    margin-top: 2rem;
+    margin-left: 3rem;
+    gap: 0.58rem;
+    max-width: 210px;
+  }
+  .am-card-contact-row { font-size: 0.31rem; }
+  .am-card-back-logo { width: 52px; height: 52px; }
+  .am-card-back-company { font-size: 0.72rem; }
+  .am-card-back-tagline { font-size: 0.27rem; }
 }
