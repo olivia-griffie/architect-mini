@@ -5,30 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Architect Mini</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <div class="am-startup" id="startupScreen">
+    <div class="am-startup-card">
+      <div class="am-startup-brand">
+        <img src="assets/amlogo.png" alt="Architect Mini logo" class="am-startup-logo" />
+        <div class="am-startup-wordmark" aria-label="architect mini">
+          <span class="am-startup-type" id="startupTypedText"></span>
+          <span class="am-startup-caret"></span>
+        </div>
+      </div>
+
+      <form class="am-login-form" id="loginForm">
+        <div class="am-login-copy">
+          <h1>Welcome back</h1>
+          <p>Sign in to save and reopen your templates.</p>
+        </div>
+
+        <div class="am-field-group">
+          <label class="am-label" for="loginUsername">Username</label>
+          <input class="am-input" id="loginUsername" type="text" placeholder="Enter username" autocomplete="username" />
+        </div>
+
+        <div class="am-field-group">
+          <label class="am-label" for="loginPassword">Password</label>
+          <input class="am-input" id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" />
+        </div>
+
+        <p class="am-login-status" id="loginStatus"></p>
+
+        <button class="am-btn am-btn--primary" id="loginButton" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
 
   <div class="am-widget" id="architectMini">
-
-    <!-- ── LEFT PANEL ── -->
     <div class="am-left">
-
       <header class="am-header">
         <div class="am-logo">
           <img src="assets/amlogo.png" alt="Architect Mini logo" class="am-logo-image" />
         </div>
       </header>
 
-      <div class="am-design-name-bar">
+      <div class="am-design-name-bar" id="designNameBar">
         <input
           type="text"
           id="designName"
           class="am-design-name-input"
-          value="Kim Business Card"
-          placeholder="Design name…"
+          value=""
+          placeholder="Name this design to continue"
+          aria-describedby="designNamePrompt"
         />
-        <span class="am-template-label">Standard Business Card Template</span>
+        <span class="am-template-label" id="designNamePrompt">Give this business card a name before previewing, downloading, or saving.</span>
       </div>
 
       <div class="am-zoom-bar">
@@ -43,8 +73,6 @@
 
       <div class="am-canvas-area">
         <div class="am-card-wrapper" id="cardWrapper">
-
-          <!-- FRONT CARD -->
           <div class="am-card am-card--front" id="cardFront">
             <div class="am-card-bg">
               <img class="am-card-bg-image" src="assets/business-card-front-bg.png" alt="" aria-hidden="true" />
@@ -75,7 +103,6 @@
           </div>
           <div class="am-card-label">Front Side</div>
 
-          <!-- BACK CARD -->
           <div class="am-card am-card--back" id="cardBack">
             <div class="am-card-bg">
               <img class="am-card-bg-image" src="assets/business-card-back-bg.png" alt="" aria-hidden="true" />
@@ -93,7 +120,6 @@
             </div>
           </div>
           <div class="am-card-label">Back Side</div>
-
         </div>
       </div>
 
@@ -101,16 +127,34 @@
         <button class="am-page-btn am-page-btn--active" data-page="1">1</button>
         <button class="am-page-btn" data-page="2">2</button>
       </div>
-
     </div>
 
-    <!-- ── RIGHT PANEL ── -->
     <div class="am-right" id="amRightPanel">
+      <button class="am-save-btn" id="saveDesignButton" type="button">Save my design</button>
       <button class="am-close-btn" id="closePanel" title="Close">
         <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="8" x2="16" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
 
       <div class="am-form-scroll">
+        <div class="am-field-group">
+          <label class="am-label" for="templateSelect">Template</label>
+          <div class="am-select-wrapper">
+            <select class="am-select" id="templateSelect">
+              <option value="business-card">Business Card</option>
+            </select>
+            <svg class="am-select-arrow" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+
+        <div class="am-field-group">
+          <label class="am-label" for="savedDesigns">Saved Designs</label>
+          <div class="am-select-wrapper">
+            <select class="am-select" id="savedDesigns">
+              <option value="">Choose a saved design</option>
+            </select>
+            <svg class="am-select-arrow" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+        </div>
 
         <div class="am-field-group">
           <label class="am-label" for="fieldFirstName">First Name</label>
@@ -141,7 +185,7 @@
           <label class="am-label" for="fieldAddress">Address</label>
           <div class="am-select-wrapper">
             <select class="am-select" id="fieldAddress" data-preview="previewAddress">
-              <option value="">Select an address…</option>
+              <option value="">Select an address...</option>
               <option value="132 9th Street, Lakeview Lane NY 87903">132 9th Street, Lakeview Lane NY 87903</option>
               <option value="200 Park Ave, New York NY 10001">200 Park Ave, New York NY 10001</option>
               <option value="1 Infinite Loop, Cupertino CA 95014">1 Infinite Loop, Cupertino CA 95014</option>
@@ -176,16 +220,13 @@
           </label>
           <span class="am-upload-filename" id="uploadFilename"></span>
         </div>
-
       </div>
 
       <div class="am-form-actions">
-        <button class="am-btn am-btn--outline" id="btnDownloadPDF">Download PDF</button>
-        <button class="am-btn am-btn--primary" id="btnPreviewTab">Preview in Tab</button>
+        <button class="am-btn am-btn--outline" id="btnDownloadPDF" type="button">Download PDF</button>
+        <button class="am-btn am-btn--primary" id="btnPreviewTab" type="button">Preview in Tab</button>
       </div>
-
     </div>
-
   </div>
 
   <script src="app.js"></script>
