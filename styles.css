@@ -1,9 +1,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --card-width: 520px;
-  --card-height: 290px;
-  --card-scale: 1.3684210526;
+  --card-width: 620px;
+  --card-height: 346px;
+  --card-scale: 1.6315789474;
   --navy: #1b2a4a;
   --navy-2: #113d6e;
   --teal: #00c8c8;
@@ -113,18 +113,18 @@ body.am-startup-active { overflow: hidden; }
 
 .am-login-copy h1 {
   margin-bottom: 0.28rem;
-  font-size: 3.6rem;
+  font-size: 2.35rem;
   color: var(--navy-2);
 }
 
 .am-login-copy p,
 .am-login-status {
-  font-size: 2.37rem;
+  font-size: 1.12rem;
   color: var(--muted);
   line-height: 1.55;
 }
 
-.am-login-status { min-height: 2.8rem; }
+.am-login-status { min-height: 1.4rem; }
 
 .am-login-hint {
   margin-top: 0.95rem;
@@ -139,8 +139,8 @@ body.am-startup-active { overflow: hidden; }
 .am-widget {
   display: flex;
   width: 100%;
-  max-width: 1640px;
-  min-height: 940px;
+  max-width: 1780px;
+  min-height: 1020px;
   background: var(--panel-bg);
   border-radius: 16px;
   box-shadow: var(--shadow);
@@ -149,11 +149,11 @@ body.am-startup-active { overflow: hidden; }
 }
 
 .am-left {
-  flex: 1 1 74%;
+  flex: 1 1 77%;
   display: flex;
   flex-direction: column;
   background: var(--off-white);
-  padding: 1.9rem 2.35rem 1.5rem;
+  padding: 2rem 2.8rem 1.8rem;
   border-right: 1px solid var(--border);
   min-width: 0;
 }
@@ -257,15 +257,15 @@ body.am-startup-active { overflow: hidden; }
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  overflow: hidden;
-  padding: 1.1rem 0 0.35rem;
+  overflow: visible;
+  padding: 1.35rem 0 1.2rem;
 }
 
 .am-card-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.9rem;
+  gap: 1.15rem;
   transform-origin: top center;
   transition: transform 0.2s ease;
 }
@@ -286,7 +286,7 @@ body.am-startup-active { overflow: hidden; }
   text-align: center;
   font-weight: 400;
   letter-spacing: 0.04em;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.6rem;
 }
 
 .am-card-bg {
@@ -382,7 +382,8 @@ body.am-startup-active { overflow: hidden; }
   display: flex;
   justify-content: center;
   gap: 0.55rem;
-  padding-top: 0.25rem;
+  padding-top: 1.4rem;
+  margin-top: 0.4rem;
 }
 
 .am-page-btn {
@@ -410,11 +411,11 @@ body.am-startup-active { overflow: hidden; }
 }
 
 .am-right {
-  flex: 0 0 430px;
+  flex: 0 0 500px;
   display: flex;
   flex-direction: column;
   background: var(--panel-bg);
-  padding: 1.5rem 1.7rem 1.35rem;
+  padding: 1.7rem 1.9rem 1.5rem;
   position: relative;
   overflow: hidden;
 }
@@ -482,10 +483,14 @@ body.am-startup-active { overflow: hidden; }
   gap: 0.35rem;
 }
 
+.am-field-group--hidden {
+  display: none;
+}
+
 .am-field-group--half { max-width: 55%; }
 
 .am-label {
-  font-size: 0.78rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: var(--accent);
   letter-spacing: 0.02em;
@@ -499,11 +504,11 @@ body.am-startup-active { overflow: hidden; }
 .am-select,
 .am-color-input {
   width: 100%;
-  padding: 0.6rem 0.75rem;
+  padding: 0.72rem 0.9rem;
   border: 1.5px solid var(--border);
   border-radius: 7px;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: var(--text);
   background: var(--panel-bg);
   outline: none;
@@ -558,7 +563,7 @@ body.am-startup-active { overflow: hidden; }
 }
 
 .am-layer-hint {
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: var(--muted);
   line-height: 1.45;
 }
