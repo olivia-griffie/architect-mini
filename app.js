@@ -6,14 +6,14 @@ const CARD = { width: 380, height: 212 };
 const BACK_LOGO_PLACEHOLDER = `<svg class="am-logo-placeholder am-logo-placeholder--back" viewBox="0 0 60 60" fill="none"><path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"></path><path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"></path></svg>`;
 const DEFAULT_LAYOUT = {
   frontName: { label: 'Front Name', type: 'text', x: 31, y: 31, width: 200, fontSize: 12, color: '#113D6E', align: 'left', weight: 500, lineHeight: 1.02, textTransform: 'uppercase' },
-  frontTitle: { label: 'Front Title', type: 'text', x: 31, y: 50, width: 180, fontSize: 5.25, color: '#131313', align: 'left', weight: 400, lineHeight: 1.02 },
-  frontEmail: { label: 'Front Email', type: 'text', x: 135, y: 103, width: 230, fontSize: 4.25, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
-  frontPhone: { label: 'Front Phone', type: 'text', x: 135, y: 125, width: 230, fontSize: 4.25, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
-  frontWebsite: { label: 'Front Website', type: 'text', x: 135, y: 147, width: 230, fontSize: 4.25, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
-  frontAddress: { label: 'Front Address', type: 'text', x: 135, y: 169, width: 220, fontSize: 4.25, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
-  backLogo: { label: 'Back Logo', type: 'logo', x: 159, y: 63, width: 62, height: 62 },
-  backCompany: { label: 'Back Company', type: 'text', x: 67, y: 139, width: 246, fontSize: 10.25, color: '#113D6E', align: 'center', weight: 800, lineHeight: 1.02, textTransform: 'uppercase' },
-  backTagline: { label: 'Back Tagline', type: 'text', x: 84, y: 182, width: 212, fontSize: 3.6, color: '#113D6E', align: 'center', weight: 500, lineHeight: 1.15 }
+  frontTitle: { label: 'Front Title', type: 'text', x: 31, y: 51, width: 180, fontSize: 7, color: '#131313', align: 'left', weight: 400, lineHeight: 1.02 },
+  frontEmail: { label: 'Front Email', type: 'text', x: 54, y: 102, width: 230, fontSize: 6.5, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
+  frontPhone: { label: 'Front Phone', type: 'text', x: 54, y: 122, width: 230, fontSize: 6.5, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
+  frontWebsite: { label: 'Front Website', type: 'text', x: 54, y: 142, width: 230, fontSize: 6.5, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
+  frontAddress: { label: 'Front Address', type: 'text', x: 54, y: 162, width: 230, fontSize: 6.5, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
+  backLogo: { label: 'Back Logo', type: 'logo', x: 140, y: 63, width: 100, height: 62 },
+  backCompany: { label: 'Back Company', type: 'text', x: 66, y: 137, width: 248, fontSize: 10.5, color: '#214E84', align: 'center', weight: 800, lineHeight: 1.02, textTransform: 'uppercase' },
+  backTagline: { label: 'Back Tagline', type: 'text', x: 88, y: 173, width: 220, fontSize: 8.5, color: '#214E84', align: 'center', weight: 500, lineHeight: 1.15 }
 };
 const state = { currentUser: null, hasUnsavedChanges: false, activeLayerId: 'frontName', layout: structuredClone(DEFAULT_LAYOUT) };
 
@@ -115,7 +115,11 @@ function typeStartupWordmark() {
   const tick = () => {
     els.startupTypedText.textContent = STARTUP_WORDMARK.slice(0, i);
     i += 1;
-    if (i <= STARTUP_WORDMARK.length) window.setTimeout(tick, 75);
+    if (i <= STARTUP_WORDMARK.length) {
+      window.setTimeout(tick, 75);
+    } else {
+      document.querySelector('.am-startup-caret')?.classList.add('am-startup-caret--done');
+    }
   };
   window.setTimeout(tick, 250);
 }
