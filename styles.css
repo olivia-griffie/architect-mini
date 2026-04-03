@@ -86,7 +86,9 @@ body.am-startup-active { overflow: hidden; }
 
 .am-startup-wordmark {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   min-height: 4.8rem;
   min-width: 0;
   color: var(--navy-2);
@@ -94,9 +96,8 @@ body.am-startup-active { overflow: hidden; }
   letter-spacing: 0.08em;
   font-weight: 700;
   font-size: clamp(3.75rem, 4.7vw, 5.05rem);
-  line-height: 1.1;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  line-height: 0.98;
+  white-space: nowrap;
 }
 
 .am-login-form {
@@ -119,7 +120,7 @@ body.am-startup-active { overflow: hidden; }
 
 .am-login-copy p,
 .am-login-status {
-  font-size: 1.12rem;
+  font-size: 0.62rem;
   color: var(--muted);
   line-height: 1.55;
 }
@@ -128,6 +129,10 @@ body.am-startup-active { overflow: hidden; }
 
 .am-login-hint {
   margin-top: 0.95rem;
+}
+
+.am-password-wrap {
+  position: relative;
 }
 
 .prototype-modal__dialog {
@@ -265,7 +270,7 @@ body.am-startup-active { overflow: hidden; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.15rem;
+  gap: 0.55rem;
   transform-origin: top center;
   transition: transform 0.2s ease;
 }
@@ -286,7 +291,7 @@ body.am-startup-active { overflow: hidden; }
   text-align: center;
   font-weight: 400;
   letter-spacing: 0.04em;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.2rem;
 }
 
 .am-card-bg {
@@ -382,8 +387,10 @@ body.am-startup-active { overflow: hidden; }
   display: flex;
   justify-content: center;
   gap: 0.55rem;
-  padding-top: 1.4rem;
-  margin-top: 0.4rem;
+  padding-top: 0.35rem;
+  margin-top: 0.15rem;
+  position: relative;
+  z-index: 20;
 }
 
 .am-page-btn {
@@ -489,6 +496,18 @@ body.am-startup-active { overflow: hidden; }
 
 .am-field-group--half { max-width: 55%; }
 
+.am-field-group--active .am-label {
+  color: var(--accent-dk);
+}
+
+.am-field-group--active .am-input,
+.am-field-group--active .am-select,
+.am-field-group--active .am-color-input,
+.am-field-group--active .am-upload-btn {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(92, 79, 195, 0.12);
+}
+
 .am-label {
   font-size: 0.95rem;
   font-weight: 500;
@@ -497,7 +516,7 @@ body.am-startup-active { overflow: hidden; }
 }
 
 .am-startup .am-label {
-  font-size: 1.9rem;
+  font-size: 1.4rem;
 }
 
 .am-input,
@@ -532,7 +551,35 @@ body.am-startup-active { overflow: hidden; }
 
 .am-startup .am-input {
   padding: 1rem 1.1rem;
-  font-size: 1.85rem;
+  font-size: 1.35rem;
+}
+
+.am-input--password {
+  padding-right: 3.4rem;
+}
+
+.am-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.am-password-toggle:hover {
+  color: var(--navy-2);
+}
+
+.am-password-toggle svg {
+  width: 22px;
+  height: 22px;
 }
 
 .am-select-wrapper {
@@ -628,7 +675,7 @@ body.am-startup-active { overflow: hidden; }
 
 .am-startup .am-btn {
   padding: 1.15rem 0.9rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .am-btn:disabled {
@@ -694,6 +741,7 @@ body.am-startup-active { overflow: hidden; }
   .am-startup-wordmark {
     justify-content: center;
     font-size: clamp(1.9rem, 7vw, 2.7rem);
+    align-items: center;
   }
 
   .am-widget {

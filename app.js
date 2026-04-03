@@ -22,6 +22,7 @@ const els = {
   loginForm: $('loginForm'),
   loginUsername: $('loginUsername'),
   loginPassword: $('loginPassword'),
+  togglePassword: $('togglePassword'),
   loginStatus: $('loginStatus'),
   cardWrapper: $('cardWrapper'),
   zoomSlider: $('zoomSlider'),
@@ -47,7 +48,10 @@ const els = {
   layerPosY: $('layerPosY'),
   layerFontSize: $('layerFontSize'),
   layerColor: $('layerColor'),
-  layerEls: [...document.querySelectorAll('.am-card-layer')]
+  layerEls: [...document.querySelectorAll('.am-card-layer')],
+  layerFieldGroups: [...document.querySelectorAll('[data-layer-target]')],
+  leftPanel: document.querySelector('.am-left'),
+  canvasArea: document.querySelector('.am-canvas-area')
 };
 const fields = {
   firstName: $('fieldFirstName'),
@@ -66,6 +70,8 @@ const layerEl = id => document.querySelector(`[data-layer-id="${id}"]`);
 const layerCfg = (id = state.activeLayerId) => state.layout[id];
 const scaleNow = () => Number(els.zoomSlider.value) / 100;
 const ptToPx = (pt, scale) => pt * (96 / 72) * scale;
+const exportName = () => els.designName.value.trim() || 'Business Card';
+const exportSlug = () => exportName().replace(/\s+/g, '-').toLowerCase();
 
 function storedUsers() {
   let users;
@@ -124,8 +130,8 @@ function validateName() {
   const valid = Boolean(els.designName.value.trim());
   els.designNameBar.classList.toggle('am-design-name-bar--invalid', !valid);
   els.designNamePrompt.classList.toggle('am-template-label--invalid', !valid);
-  els.btnPreview.disabled = !valid;
-  els.btnDownload.disabled = !valid;
+  els.btnPreview.disabled = false;
+  els.btnDownload.disabled = false;
   els.saveBtn.disabled = !valid || !state.currentUser;
   return valid;
 }
@@ -169,19 +175,45 @@ function applyLayer(id) {
   el.style.lineHeight = cfg.lineHeight || 1.15;
   el.style.textTransform = cfg.textTransform || 'none';
 }
+function setLayerControlsEnabled(enabled) {
+  els.layerPosX.disabled = !enabled;
+  els.layerPosY.disabled = !enabled;
+  els.layerFontSize.disabled = !enabled;
+  els.layerColor.disabled = !enabled;
+}
+function updateFieldHighlights(id) {
+  els.layerFieldGroups.forEach(group => group.classList.toggle('am-field-group--active', Boolean(id) && group.dataset.layerTarget === id));
+}
+function clearSelection() {
+  state.activeLayerId = null;
+  els.layerEls.forEach(el => el.classList.remove('am-card-layer--selected'));
+  updateFieldHighlights(null);
+  els.selectedLayerName.value = '';
+  els.layerPosX.value = '';
+  els.layerPosY.value = '';
+  els.layerFontSize.value = '';
+  els.layerColor.value = '#113D6E';
+  setLayerControlsEnabled(false);
+}
 function selectLayer(id) {
+  if (!id || !state.layout[id]) return clearSelection();
   state.activeLayerId = id;
   els.layerEls.forEach(el => el.classList.toggle('am-card-layer--selected', el.dataset.layerId === id));
+  updateFieldHighlights(id);
   const cfg = layerCfg(id), text = cfg.type === 'text';
   els.selectedLayerName.value = cfg.label;
   els.layerPosX.value = Math.round(cfg.x);
   els.layerPosY.value = Math.round(cfg.y);
+  setLayerControlsEnabled(true);
   els.layerFontSize.disabled = !text;
   els.layerColor.disabled = !text;
   els.layerFontSize.value = text ? cfg.fontSize : '';
   els.layerColor.value = text ? cfg.color : '#113D6E';
 }
-function applyAllLayers() { Object.keys(state.layout).forEach(applyLayer); selectLayer(state.activeLayerId); }
+function applyAllLayers() {
+  Object.keys(state.layout).forEach(applyLayer);
+  if (state.activeLayerId) selectLayer(state.activeLayerId); else clearSelection();
+}
 function clampLayer(id) {
   const el = layerEl(id), cfg = layerCfg(id);
   cfg.x = Math.max(0, Math.min(cfg.x, Math.max(0, CARD.width - el.offsetWidth)));
@@ -239,7 +271,7 @@ function previewHtml(data) {
   const frontBg = document.querySelector('#cardFront .am-card-bg-image')?.src || '';
   const backBg = document.querySelector('#cardBack .am-card-bg-image')?.src || '';
   const logo = getLogoSrc() ? `<img src="${getLogoSrc()}" alt="Logo" />` : BACK_LOGO_PLACEHOLDER;
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>${data.designName} - Preview</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/><style>body{font-family:'DM Sans',sans-serif;background:#F4F3F8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1.5rem;padding:2rem}.card{width:380px;height:212px;border-radius:8px;overflow:hidden;position:relative;box-shadow:0 6px 24px rgba(27,42,74,.22)}.card-label{font-size:.72rem;color:#7A7A99;text-align:center;margin-top:.4rem}.bg{position:absolute;inset:0}.bg img{width:100%;height:100%;object-fit:cover}.content{position:relative;z-index:10;width:100%;height:100%}.layer{position:absolute;margin:0}.name strong{font-weight:800}.logo,.logo img,.logo svg{width:100%;height:100%;object-fit:contain}</style></head><body><h1>${data.designName}</h1><div><div class="card"><div class="bg"><img src="${frontBg}" alt=""/></div><div class="content"><p class="layer name" style="${layerStyle(state.layout.frontName)}"><strong>${data.firstName.toUpperCase()}</strong> ${data.lastName.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.frontTitle)}">${data.title}</p><p class="layer" style="${layerStyle(state.layout.frontEmail)}">${data.email}</p><p class="layer" style="${layerStyle(state.layout.frontPhone)}">${data.phone}</p><p class="layer" style="${layerStyle(state.layout.frontWebsite)}">${data.website}</p><p class="layer" style="${layerStyle(state.layout.frontAddress)}">${data.address}</p></div></div><div class="card-label">Front Side</div></div><div><div class="card"><div class="bg"><img src="${backBg}" alt=""/></div><div class="content"><div class="layer logo" style="${layerStyle(state.layout.backLogo)}">${logo}</div><p class="layer" style="${layerStyle(state.layout.backCompany)}">${data.company.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.backTagline)}">${data.tagline}</p></div></div><div class="card-label">Back Side</div></div></body></html>`;
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>${exportName()} - Preview</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/><style>body{font-family:'DM Sans',sans-serif;background:#F4F3F8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1.5rem;padding:2rem}.card{width:380px;height:212px;border-radius:8px;overflow:hidden;position:relative;box-shadow:0 6px 24px rgba(27,42,74,.22)}.card-label{font-size:.72rem;color:#7A7A99;text-align:center;margin-top:.4rem}.bg{position:absolute;inset:0}.bg img{width:100%;height:100%;object-fit:cover}.content{position:relative;z-index:10;width:100%;height:100%}.layer{position:absolute;margin:0}.name strong{font-weight:800}.logo,.logo img,.logo svg{width:100%;height:100%;object-fit:contain}</style></head><body><h1>${exportName()}</h1><div><div class="card"><div class="bg"><img src="${frontBg}" alt=""/></div><div class="content"><p class="layer name" style="${layerStyle(state.layout.frontName)}"><strong>${data.firstName.toUpperCase()}</strong> ${data.lastName.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.frontTitle)}">${data.title}</p><p class="layer" style="${layerStyle(state.layout.frontEmail)}">${data.email}</p><p class="layer" style="${layerStyle(state.layout.frontPhone)}">${data.phone}</p><p class="layer" style="${layerStyle(state.layout.frontWebsite)}">${data.website}</p><p class="layer" style="${layerStyle(state.layout.frontAddress)}">${data.address}</p></div></div><div class="card-label">Front Side</div></div><div><div class="card"><div class="bg"><img src="${backBg}" alt=""/></div><div class="content"><div class="layer logo" style="${layerStyle(state.layout.backLogo)}">${logo}</div><p class="layer" style="${layerStyle(state.layout.backCompany)}">${data.company.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.backTagline)}">${data.tagline}</p></div></div><div class="card-label">Back Side</div></div></body></html>`;
 }
 
 function loadImage(src) {
@@ -345,6 +377,7 @@ function moveDrag(event) {
 }
 function endDrag() { if (!drag) return; drag = null; markDirty(); }
 function updateLayerFromControls() {
+  if (!state.activeLayerId) return;
   const cfg = layerCfg();
   cfg.x = Number(els.layerPosX.value || cfg.x);
   cfg.y = Number(els.layerPosY.value || cfg.y);
@@ -374,6 +407,13 @@ els.loginForm.addEventListener('submit', event => {
   validateName();
   els.designName.focus();
 });
+
+els.togglePassword?.addEventListener('click', () => {
+  const showing = els.loginPassword.type === 'text';
+  els.loginPassword.type = showing ? 'password' : 'text';
+  els.togglePassword.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+  els.togglePassword.setAttribute('title', showing ? 'Show password' : 'Hide password');
+});
 els.designName.addEventListener('input', () => { validateName(); state.hasUnsavedChanges = true; });
 Object.values(fields).forEach(field => field.addEventListener(field.tagName === 'SELECT' ? 'change' : 'input', () => { updatePreviewText(); markDirty(); }));
 els.templateSelect.addEventListener('change', markDirty);
@@ -383,6 +423,17 @@ els.pageButtons.forEach(btn => btn.addEventListener('click', () => setActivePage
 els.zoomSlider.addEventListener('input', () => applyZoom(els.zoomSlider.value));
 els.zoomIn.addEventListener('click', () => { els.zoomSlider.value = Math.min(150, Number(els.zoomSlider.value) + 10); applyZoom(els.zoomSlider.value); });
 els.zoomOut.addEventListener('click', () => { els.zoomSlider.value = Math.max(50, Number(els.zoomSlider.value) - 10); applyZoom(els.zoomSlider.value); });
+els.layerFieldGroups.forEach(group => {
+  group.addEventListener('click', event => {
+    if (event.target.closest('.am-upload-input')) return;
+    const id = group.dataset.layerTarget;
+    if (id) selectLayer(id);
+  });
+  group.addEventListener('focusin', () => {
+    const id = group.dataset.layerTarget;
+    if (id) selectLayer(id);
+  });
+});
 els.fieldLogo.addEventListener('change', () => {
   const file = els.fieldLogo.files[0];
   if (!file) return;
@@ -394,12 +445,21 @@ els.fieldLogo.addEventListener('change', () => {
 els.layerEls.forEach(el => el.addEventListener('pointerdown', event => beginDrag(event, el.dataset.layerId)));
 document.addEventListener('pointermove', moveDrag);
 document.addEventListener('pointerup', endDrag);
+els.canvasArea.addEventListener('pointerdown', event => {
+  if (event.target === els.canvasArea || event.target.closest('.am-card') || event.target.closest('.am-card-label')) {
+    if (!event.target.closest('.am-card-layer')) clearSelection();
+  }
+});
+els.leftPanel.addEventListener('pointerdown', event => {
+  if (event.target.closest('.am-card-layer, .am-pagination, .am-zoom-bar, .am-design-name-bar, .am-header')) return;
+  if (event.target.closest('.am-card') || event.target.closest('.am-card-label') || event.target === els.canvasArea) return;
+  clearSelection();
+});
 els.layerPosX.addEventListener('input', updateLayerFromControls);
 els.layerPosY.addEventListener('input', updateLayerFromControls);
 els.layerFontSize.addEventListener('input', updateLayerFromControls);
 els.layerColor.addEventListener('input', updateLayerFromControls);
 els.btnPreview.addEventListener('click', () => {
-  if (!ensureNamed()) return;
   const win = window.open('', '_blank');
   if (!win) return alert('Preview was blocked. Please allow popups and try again.');
   win.document.open();
@@ -407,7 +467,6 @@ els.btnPreview.addEventListener('click', () => {
   win.document.close();
 });
 els.btnDownload.addEventListener('click', async () => {
-  if (!ensureNamed()) return;
   els.btnDownload.textContent = 'Generating...';
   els.btnDownload.disabled = true;
   try {
@@ -418,7 +477,7 @@ els.btnDownload.addEventListener('click', async () => {
     ]);
     const url = URL.createObjectURL(pdf), link = document.createElement('a');
     link.href = url;
-    link.download = `${els.designName.value.trim().replace(/\s+/g, '-').toLowerCase()}.pdf`;
+    link.download = `${exportSlug()}.pdf`;
     document.body.appendChild(link);
     link.click();
     link.remove();
