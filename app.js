@@ -2,8 +2,10 @@ const STORAGE_KEY = 'architect-mini-users';
 const EMPTY_SAVED_OPTION = '<option value="">Choose a saved design</option>';
 const TEST_USERS = { admin: 'admin', client: 'client' };
 const CARD = { width: 380, height: 212 };
+const FRONT_LOGO_PLACEHOLDER = `<svg class="am-logo-placeholder am-logo-placeholder--front" viewBox="0 0 60 60" fill="none"><path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"></path><path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"></path></svg>`;
 const BACK_LOGO_PLACEHOLDER = `<svg class="am-logo-placeholder am-logo-placeholder--back" viewBox="0 0 60 60" fill="none"><path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"></path><path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"></path></svg>`;
 const DEFAULT_LAYOUT = {
+  frontLogo: { label: 'Front Logo', type: 'logo', x: 243, y: 35, width: 88, height: 60 },
   frontName: { label: 'Front Name', type: 'text', x: 31, y: 31, width: 200, fontSize: 12, color: '#113D6E', align: 'left', weight: 500, lineHeight: 1.02, textTransform: 'uppercase' },
   frontTitle: { label: 'Front Title', type: 'text', x: 31, y: 51, width: 180, fontSize: 7, color: '#131313', align: 'left', weight: 400, lineHeight: 1.02 },
   frontEmail: { label: 'Front Email', type: 'text', x: 54, y: 102, width: 230, fontSize: 6.5, color: '#131313', align: 'left', weight: 400, lineHeight: 1.15 },
@@ -14,7 +16,7 @@ const DEFAULT_LAYOUT = {
   backCompany: { label: 'Back Company', type: 'text', x: 66, y: 137, width: 248, fontSize: 10.5, color: '#214E84', align: 'center', weight: 800, lineHeight: 1.02, textTransform: 'uppercase' },
   backTagline: { label: 'Back Tagline', type: 'text', x: 88, y: 173, width: 220, fontSize: 8.5, color: '#214E84', align: 'center', weight: 500, lineHeight: 1.15 }
 };
-const state = { currentUser: null, hasUnsavedChanges: false, activeLayerId: 'frontName', layout: structuredClone(DEFAULT_LAYOUT) };
+const state = { currentUser: null, hasUnsavedChanges: false, activeLayerId: 'frontName', activePage: '1', layout: structuredClone(DEFAULT_LAYOUT) };
 
 const $ = id => document.getElementById(id);
 const els = {
@@ -31,6 +33,7 @@ const els = {
   closePanel: $('closePanel'),
   saveBtn: $('saveDesignButton'),
   fieldLogo: $('fieldLogo'),
+  clearLogoBtn: $('clearLogoButton'),
   uploadName: $('uploadFilename'),
   btnDownload: $('btnDownloadPDF'),
   btnPreview: $('btnPreviewTab'),
@@ -40,8 +43,10 @@ const els = {
   designName: $('designName'),
   designNameBar: $('designNameBar'),
   designNamePrompt: $('designNamePrompt'),
+  actionHint: $('actionHint'),
   templateSelect: $('templateSelect'),
   savedDesigns: $('savedDesigns'),
+  previewLogoFront: $('previewLogoFront'),
   previewLogoBack: $('previewLogoBack'),
   selectedLayerName: $('selectedLayerName'),
   layerPosX: $('layerPosX'),
@@ -86,10 +91,13 @@ function storedUsers() {
 function saveUsers(users) { localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
 function userRecord() { return state.currentUser ? storedUsers()[state.currentUser] || null : null; }
 function setLoginStatus(msg, err = false) { els.loginStatus.textContent = msg; els.loginStatus.style.color = err ? '#b14c4c' : ''; }
-function getLogoSrc() { return els.previewLogoBack.querySelector('img')?.src || ''; }
+function getLogoSrc() { return els.previewLogoBack.querySelector('img')?.src || els.previewLogoFront.querySelector('img')?.src || ''; }
 function setLogoSrc(src = '') {
+  els.previewLogoFront.innerHTML = src ? `<img src="${src}" alt="Logo" />` : FRONT_LOGO_PLACEHOLDER;
   els.previewLogoBack.innerHTML = src ? `<img src="${src}" alt="Logo" />` : BACK_LOGO_PLACEHOLDER;
-  els.uploadName.textContent = src ? 'Logo loaded' : '';
+  els.uploadName.textContent = src ? 'Logo loaded' : 'No logo uploaded';
+  els.clearLogoBtn.disabled = !src;
+  if (!src) els.fieldLogo.value = '';
 }
 function activeData() {
   return {
@@ -101,7 +109,7 @@ function activeData() {
     email: fields.email.value.trim() || 'info@creativedevelopers.com',
     address: fields.address.value.trim() || '132 9th Street, Lakeview Lane NY 87903',
     company: fields.company.value.trim() || 'CREATIVE DEVELOPERS',
-    tagline: fields.tagline.value.trim() || 'Ideas Developed By Creative Experts!',
+    tagline: fields.tagline.value.trim() || 'tagline here',
     website: fields.website.value.trim() || 'www.creativedevelopers.com'
   };
 }
@@ -118,6 +126,7 @@ function applyZoom(value) {
   els.zoomSlider.style.background = `linear-gradient(to right, var(--accent) ${value}%, var(--border) ${value}%)`;
 }
 function setActivePage(page) {
+  state.activePage = page;
   els.pageButtons.forEach(btn => btn.classList.toggle('am-page-btn--active', btn.dataset.page === page));
   const labels = document.querySelectorAll('.am-card-label');
   const front = page === '1';
@@ -130,9 +139,11 @@ function validateName() {
   const valid = Boolean(els.designName.value.trim());
   els.designNameBar.classList.toggle('am-design-name-bar--invalid', !valid);
   els.designNamePrompt.classList.toggle('am-template-label--invalid', !valid);
-  els.btnPreview.disabled = false;
-  els.btnDownload.disabled = false;
+  els.btnPreview.disabled = !valid;
+  els.btnDownload.disabled = !valid;
   els.saveBtn.disabled = !valid || !state.currentUser;
+  els.actionHint.textContent = valid ? 'Preview and PNG download are ready.' : 'Name your design above to enable preview and PNG download.';
+  els.actionHint.classList.toggle('am-action-hint--invalid', !valid);
   return valid;
 }
 function markDirty() { state.hasUnsavedChanges = true; validateName(); }
@@ -182,7 +193,10 @@ function setLayerControlsEnabled(enabled) {
   els.layerColor.disabled = !enabled;
 }
 function updateFieldHighlights(id) {
-  els.layerFieldGroups.forEach(group => group.classList.toggle('am-field-group--active', Boolean(id) && group.dataset.layerTarget === id));
+  els.layerFieldGroups.forEach(group => {
+    const targets = group.dataset.layerTarget.split(/\s+/).filter(Boolean);
+    group.classList.toggle('am-field-group--active', Boolean(id) && targets.includes(id));
+  });
 }
 function clearSelection() {
   state.activeLayerId = null;
@@ -271,7 +285,8 @@ function previewHtml(data) {
   const frontBg = document.querySelector('#cardFront .am-card-bg-image')?.src || '';
   const backBg = document.querySelector('#cardBack .am-card-bg-image')?.src || '';
   const logo = getLogoSrc() ? `<img src="${getLogoSrc()}" alt="Logo" />` : BACK_LOGO_PLACEHOLDER;
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>${exportName()} - Preview</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/><style>body{font-family:'DM Sans',sans-serif;background:#F4F3F8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1.5rem;padding:2rem}.card{width:380px;height:212px;border-radius:8px;overflow:hidden;position:relative;box-shadow:0 6px 24px rgba(27,42,74,.22)}.card-label{font-size:.72rem;color:#7A7A99;text-align:center;margin-top:.4rem}.bg{position:absolute;inset:0}.bg img{width:100%;height:100%;object-fit:cover}.content{position:relative;z-index:10;width:100%;height:100%}.layer{position:absolute;margin:0}.name strong{font-weight:800}.logo,.logo img,.logo svg{width:100%;height:100%;object-fit:contain}</style></head><body><h1>${exportName()}</h1><div><div class="card"><div class="bg"><img src="${frontBg}" alt=""/></div><div class="content"><p class="layer name" style="${layerStyle(state.layout.frontName)}"><strong>${data.firstName.toUpperCase()}</strong> ${data.lastName.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.frontTitle)}">${data.title}</p><p class="layer" style="${layerStyle(state.layout.frontEmail)}">${data.email}</p><p class="layer" style="${layerStyle(state.layout.frontPhone)}">${data.phone}</p><p class="layer" style="${layerStyle(state.layout.frontWebsite)}">${data.website}</p><p class="layer" style="${layerStyle(state.layout.frontAddress)}">${data.address}</p></div></div><div class="card-label">Front Side</div></div><div><div class="card"><div class="bg"><img src="${backBg}" alt=""/></div><div class="content"><div class="layer logo" style="${layerStyle(state.layout.backLogo)}">${logo}</div><p class="layer" style="${layerStyle(state.layout.backCompany)}">${data.company.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.backTagline)}">${data.tagline}</p></div></div><div class="card-label">Back Side</div></div></body></html>`;
+  const frontLogo = getLogoSrc() ? `<img src="${getLogoSrc()}" alt="Logo" />` : FRONT_LOGO_PLACEHOLDER;
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>${exportName()} - Preview</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/><style>body{font-family:'DM Sans',sans-serif;background:#F4F3F8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1.5rem;padding:2rem}.card{width:380px;height:212px;border-radius:8px;overflow:hidden;position:relative;box-shadow:0 6px 24px rgba(27,42,74,.22)}.card-label{font-size:.72rem;color:#7A7A99;text-align:center;margin-top:.4rem}.bg{position:absolute;inset:0}.bg img{width:100%;height:100%;object-fit:cover}.content{position:relative;z-index:10;width:100%;height:100%}.layer{position:absolute;margin:0}.name strong{font-weight:800}.logo,.logo img,.logo svg{width:100%;height:100%;object-fit:contain}</style></head><body><h1>${exportName()}</h1><div><div class="card"><div class="bg"><img src="${frontBg}" alt=""/></div><div class="content"><div class="layer logo" style="${layerStyle(state.layout.frontLogo)}">${frontLogo}</div><p class="layer name" style="${layerStyle(state.layout.frontName)}"><strong>${data.firstName.toUpperCase()}</strong> ${data.lastName.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.frontTitle)}">${data.title}</p><p class="layer" style="${layerStyle(state.layout.frontEmail)}">${data.email}</p><p class="layer" style="${layerStyle(state.layout.frontPhone)}">${data.phone}</p><p class="layer" style="${layerStyle(state.layout.frontWebsite)}">${data.website}</p><p class="layer" style="${layerStyle(state.layout.frontAddress)}">${data.address}</p></div></div><div class="card-label">Front Side</div></div><div><div class="card"><div class="bg"><img src="${backBg}" alt=""/></div><div class="content"><div class="layer logo" style="${layerStyle(state.layout.backLogo)}">${logo}</div><p class="layer" style="${layerStyle(state.layout.backCompany)}">${data.company.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.backTagline)}">${data.tagline}</p></div></div><div class="card-label">Back Side</div></div></body></html>`;
 }
 
 function loadImage(src) {
@@ -326,6 +341,8 @@ async function renderCanvases(data) {
   front.width = width; front.height = height;
   const f = front.getContext('2d');
   f.drawImage(frontBg, 0, 0, width, height);
+  const frontLogoCfg = state.layout.frontLogo;
+  if (logoImg) f.drawImage(logoImg, frontLogoCfg.x * scale, frontLogoCfg.y * scale, frontLogoCfg.width * scale, frontLogoCfg.height * scale);
   ['frontName', 'frontTitle', 'frontEmail', 'frontPhone', 'frontWebsite', 'frontAddress'].forEach(id => drawTextLayer(f, id, data, scale));
   const back = document.createElement('canvas');
   back.width = width; back.height = height;
@@ -337,30 +354,18 @@ async function renderCanvases(data) {
   drawTextLayer(b, 'backTagline', data, scale);
   return { front, back };
 }
-function dataUrlBytes(url) {
-  const bin = atob(url.split(',')[1]);
-  return Uint8Array.from(bin, c => c.charCodeAt(0));
-}
-function buildPdf(images) {
-  const encoder = new TextEncoder(), parts = [], offsets = [0];
-  let offset = 0;
-  const bytes = chunk => { parts.push(chunk); offset += chunk.length; };
-  const text = str => bytes(encoder.encode(str));
-  const pageW = 252, pageH = 144, count = 2 + images.length * 3;
-  bytes(new Uint8Array([0x25,0x50,0x44,0x46,0x2d,0x31,0x2e,0x33,0x0a,0x25,0xff,0xff,0xff,0xff,0x0a]));
-  offsets[1] = offset; text('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
-  const kids = images.map((_, i) => `${3 + i * 3} 0 R`).join(' ');
-  offsets[2] = offset; text(`2 0 obj\n<< /Type /Pages /Count ${images.length} /Kids [${kids}] >>\nendobj\n`);
-  images.forEach((img, i) => {
-    const page = 3 + i * 3, image = page + 1, content = page + 2, stream = `q\n${pageW} 0 0 ${pageH} 0 0 cm\n/Im${i + 1} Do\nQ\n`;
-    offsets[page] = offset; text(`${page} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im${i + 1} ${image} 0 R >> >> /Contents ${content} 0 R >>\nendobj\n`);
-    offsets[image] = offset; text(`${image} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${img.width} /Height ${img.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.bytes.length} >>\nstream\n`); bytes(img.bytes); text('\nendstream\nendobj\n');
-    offsets[content] = offset; text(`${content} 0 obj\n<< /Length ${stream.length} >>\nstream\n${stream}endstream\nendobj\n`);
-  });
-  const xref = offset; text(`xref\n0 ${count + 1}\n`); text('0000000000 65535 f \n');
-  for (let i = 1; i <= count; i += 1) text(`${String(offsets[i]).padStart(10, '0')} 00000 n \n`);
-  text(`trailer\n<< /Size ${count + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
-  return new Blob(parts, { type: 'application/pdf' });
+function buildPngSheet(front, back) {
+  const gap = 64;
+  const padding = 48;
+  const sheet = document.createElement('canvas');
+  sheet.width = front.width + padding * 2;
+  sheet.height = front.height + back.height + gap + padding * 2;
+  const ctx = sheet.getContext('2d');
+  ctx.fillStyle = '#F4F3F8';
+  ctx.fillRect(0, 0, sheet.width, sheet.height);
+  ctx.drawImage(front, padding, padding);
+  ctx.drawImage(back, padding, padding + front.height + gap);
+  return sheet;
 }
 
 let drag = null;
@@ -426,11 +431,13 @@ els.zoomOut.addEventListener('click', () => { els.zoomSlider.value = Math.max(50
 els.layerFieldGroups.forEach(group => {
   group.addEventListener('click', event => {
     if (event.target.closest('.am-upload-input')) return;
-    const id = group.dataset.layerTarget;
+    const targets = group.dataset.layerTarget.split(/\s+/).filter(Boolean);
+    const id = targets.length > 1 ? (state.activePage === '2' ? targets[targets.length - 1] : targets[0]) : targets[0];
     if (id) selectLayer(id);
   });
   group.addEventListener('focusin', () => {
-    const id = group.dataset.layerTarget;
+    const targets = group.dataset.layerTarget.split(/\s+/).filter(Boolean);
+    const id = targets.length > 1 ? (state.activePage === '2' ? targets[targets.length - 1] : targets[0]) : targets[0];
     if (id) selectLayer(id);
   });
 });
@@ -442,6 +449,7 @@ els.fieldLogo.addEventListener('change', () => {
   reader.onload = e => { setLogoSrc(e.target.result); markDirty(); };
   reader.readAsDataURL(file);
 });
+els.clearLogoBtn.addEventListener('click', () => { setLogoSrc(''); markDirty(); });
 els.layerEls.forEach(el => el.addEventListener('pointerdown', event => beginDrag(event, el.dataset.layerId)));
 document.addEventListener('pointermove', moveDrag);
 document.addEventListener('pointerup', endDrag);
@@ -471,22 +479,19 @@ els.btnDownload.addEventListener('click', async () => {
   els.btnDownload.disabled = true;
   try {
     const { front, back } = await renderCanvases(activeData());
-    const pdf = buildPdf([
-      { width: front.width, height: front.height, bytes: dataUrlBytes(front.toDataURL('image/jpeg', 0.92)) },
-      { width: back.width, height: back.height, bytes: dataUrlBytes(back.toDataURL('image/jpeg', 0.92)) }
-    ]);
-    const url = URL.createObjectURL(pdf), link = document.createElement('a');
+    const png = buildPngSheet(front, back);
+    const url = png.toDataURL('image/png');
+    const link = document.createElement('a');
     link.href = url;
-    link.download = `${exportSlug()}.pdf`;
+    link.download = `${exportSlug()}.png`;
     document.body.appendChild(link);
     link.click();
     link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   } catch (err) {
-    console.error('PDF generation failed:', err);
-    alert('PDF generation failed. Please try again.');
+    console.error('PNG generation failed:', err);
+    alert('PNG generation failed. Please try again.');
   } finally {
-    els.btnDownload.textContent = 'Download PDF';
+    els.btnDownload.textContent = 'Download PNG';
     validateName();
   }
 });

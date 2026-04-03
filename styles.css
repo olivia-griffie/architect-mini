@@ -120,7 +120,7 @@ body.am-startup-active { overflow: hidden; }
 
 .am-login-copy p,
 .am-login-status {
-  font-size: 0.62rem;
+  font-size: 1.25rem;
   color: var(--muted);
   line-height: 1.55;
 }
@@ -181,7 +181,7 @@ body.am-startup-active { overflow: hidden; }
   background: var(--panel-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.55rem 0.85rem;
+  padding: 0.9rem 1.15rem;
   margin-bottom: 0.85rem;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
@@ -197,7 +197,7 @@ body.am-startup-active { overflow: hidden; }
   border: none;
   outline: none;
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 1.45rem;
   font-weight: 500;
   color: var(--text);
   background: transparent;
@@ -207,7 +207,7 @@ body.am-startup-active { overflow: hidden; }
 
 .am-template-label {
   display: block;
-  font-size: 0.72rem;
+  font-size: 1.22rem;
   color: var(--muted);
   margin-top: 0.18rem;
   font-weight: 400;
@@ -344,6 +344,10 @@ body.am-startup-active { overflow: hidden; }
   object-fit: contain;
 }
 
+.am-card-front-logo {
+  z-index: 1;
+}
+
 .am-card-name {
   color: var(--navy-2);
   line-height: 1.02;
@@ -381,13 +385,14 @@ body.am-startup-active { overflow: hidden; }
 }
 
 .am-logo-placeholder { width: 48px; height: 48px; }
+.am-logo-placeholder--front { width: 56px; height: 56px; }
 .am-logo-placeholder--back { width: 52px; height: 52px; }
 
 .am-pagination {
   display: flex;
   justify-content: center;
   gap: 0.55rem;
-  padding-top: 0.35rem;
+  padding-top: 200px;
   margin-top: 0.15rem;
   position: relative;
   z-index: 20;
@@ -509,7 +514,7 @@ body.am-startup-active { overflow: hidden; }
 }
 
 .am-label {
-  font-size: 0.95rem;
+  font-size: 1.45rem;
   font-weight: 500;
   color: var(--accent);
   letter-spacing: 0.02em;
@@ -527,7 +532,7 @@ body.am-startup-active { overflow: hidden; }
   border: 1.5px solid var(--border);
   border-radius: 7px;
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 1.5rem;
   color: var(--text);
   background: var(--panel-bg);
   outline: none;
@@ -609,8 +614,21 @@ body.am-startup-active { overflow: hidden; }
   gap: 0.6rem;
 }
 
+.am-mini-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.am-mini-field-label {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
 .am-layer-hint {
-  font-size: 0.82rem;
+  font-size: 1.32rem;
   color: var(--muted);
   line-height: 1.45;
 }
@@ -623,16 +641,17 @@ body.am-startup-active { overflow: hidden; }
   gap: 0.4rem;
   border: 1.5px dashed var(--border);
   border-radius: 10px;
-  padding: 1.1rem;
+  padding: 1.65rem;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 1.32rem;
   font-weight: 400;
   background: var(--off-white);
   user-select: none;
-  max-width: 50%;
-  align-self: center;
+  max-width: 100%;
+  align-self: stretch;
+  min-height: 150px;
 }
 
 .am-upload-btn:hover {
@@ -641,11 +660,11 @@ body.am-startup-active { overflow: hidden; }
   background: rgba(92, 79, 195, 0.04);
 }
 
-.am-upload-btn svg { width: 26px; height: 26px; }
+.am-upload-btn svg { width: 38px; height: 38px; }
 .am-upload-input { display: none; }
 
 .am-upload-filename {
-  font-size: 0.72rem;
+  font-size: 1.22rem;
   color: var(--teal-mid);
   font-weight: 500;
   text-align: center;
@@ -663,14 +682,15 @@ body.am-startup-active { overflow: hidden; }
 
 .am-btn {
   flex: 1;
-  padding: 0.82rem 0.7rem;
+  padding: 1.22rem 1rem;
   border-radius: 8px;
   font-family: var(--font-body);
-  font-size: 0.98rem;
+  font-size: 1.48rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.16s;
   letter-spacing: 0.01em;
+  min-height: 92px;
 }
 
 .am-startup .am-btn {
@@ -705,6 +725,36 @@ body.am-startup-active { overflow: hidden; }
   background: var(--accent-dk);
   border-color: var(--accent-dk);
   box-shadow: 0 4px 14px rgba(92, 79, 195, 0.35);
+}
+
+.am-btn--ghost {
+  flex: 0 0 auto;
+  min-height: 82px;
+  padding: 0.95rem 1rem;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+.am-btn--ghost:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.am-btn--logo-clear {
+  width: 100%;
+}
+
+.am-action-hint {
+  margin-top: 0.85rem;
+  font-size: 1.08rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.am-action-hint--invalid {
+  color: #b14c4c;
 }
 
 @keyframes am-logo-pop {
