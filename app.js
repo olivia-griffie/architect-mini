@@ -2,6 +2,7 @@ const STORAGE_KEY = 'architect-mini-users';
 const EMPTY_SAVED_OPTION = '<option value="">Choose a saved design</option>';
 const TEST_USERS = { admin: 'admin', client: 'client' };
 const CARD = { width: 380, height: 212 };
+const DEFAULT_LOGO_SRC = 'assets/amlogo.png';
 const FRONT_LOGO_PLACEHOLDER = `<svg class="am-logo-placeholder am-logo-placeholder--front" viewBox="0 0 60 60" fill="none"><path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"></path><path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"></path></svg>`;
 const BACK_LOGO_PLACEHOLDER = `<svg class="am-logo-placeholder am-logo-placeholder--back" viewBox="0 0 60 60" fill="none"><path d="M30 5 L55 30 L30 55 L5 30 Z" stroke="#00C8C8" stroke-width="2.5" fill="none"></path><path d="M20 30 L30 15 L40 30 L30 45 Z" stroke="#00C8C8" stroke-width="2" fill="none"></path></svg>`;
 const DEFAULT_LAYOUT = {
@@ -93,11 +94,18 @@ function userRecord() { return state.currentUser ? storedUsers()[state.currentUs
 function setLoginStatus(msg, err = false) { els.loginStatus.textContent = msg; els.loginStatus.style.color = err ? '#b14c4c' : ''; }
 function getLogoSrc() { return els.previewLogoBack.querySelector('img')?.src || els.previewLogoFront.querySelector('img')?.src || ''; }
 function setLogoSrc(src = '') {
-  els.previewLogoFront.innerHTML = src ? `<img src="${src}" alt="Logo" />` : FRONT_LOGO_PLACEHOLDER;
-  els.previewLogoBack.innerHTML = src ? `<img src="${src}" alt="Logo" />` : BACK_LOGO_PLACEHOLDER;
-  els.uploadName.textContent = src ? 'Logo loaded' : 'No logo uploaded';
-  els.clearLogoBtn.disabled = !src;
+  const logoSrc = src || DEFAULT_LOGO_SRC;
+  els.previewLogoFront.innerHTML = `<img src="${logoSrc}" alt="Logo" />`;
+  els.previewLogoBack.innerHTML = `<img src="${logoSrc}" alt="Logo" />`;
+  els.uploadName.textContent = src ? 'Custom logo loaded' : 'Using default am logo';
+  els.clearLogoBtn.disabled = false;
   if (!src) els.fieldLogo.value = '';
+}
+function applyEmbeddedBackgrounds() {
+  const front = window.AM_FRONT_BG;
+  const back = window.AM_BACK_BG;
+  if (front) document.querySelector('#cardFront .am-card-bg-image')?.setAttribute('src', front);
+  if (back) document.querySelector('#cardBack .am-card-bg-image')?.setAttribute('src', back);
 }
 function activeData() {
   return {
@@ -284,8 +292,8 @@ function layerStyle(cfg) {
 function previewHtml(data) {
   const frontBg = document.querySelector('#cardFront .am-card-bg-image')?.src || '';
   const backBg = document.querySelector('#cardBack .am-card-bg-image')?.src || '';
-  const logo = getLogoSrc() ? `<img src="${getLogoSrc()}" alt="Logo" />` : BACK_LOGO_PLACEHOLDER;
-  const frontLogo = getLogoSrc() ? `<img src="${getLogoSrc()}" alt="Logo" />` : FRONT_LOGO_PLACEHOLDER;
+  const logo = `<img src="${getLogoSrc() || DEFAULT_LOGO_SRC}" alt="Logo" />`;
+  const frontLogo = `<img src="${getLogoSrc() || DEFAULT_LOGO_SRC}" alt="Logo" />`;
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>${exportName()} - Preview</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/><style>body{font-family:'DM Sans',sans-serif;background:#F4F3F8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1.5rem;padding:2rem}.card{width:380px;height:212px;border-radius:8px;overflow:hidden;position:relative;box-shadow:0 6px 24px rgba(27,42,74,.22)}.card-label{font-size:.72rem;color:#7A7A99;text-align:center;margin-top:.4rem}.bg{position:absolute;inset:0}.bg img{width:100%;height:100%;object-fit:cover}.content{position:relative;z-index:10;width:100%;height:100%}.layer{position:absolute;margin:0}.name strong{font-weight:800}.logo,.logo img,.logo svg{width:100%;height:100%;object-fit:contain}</style></head><body><h1>${exportName()}</h1><div><div class="card"><div class="bg"><img src="${frontBg}" alt=""/></div><div class="content"><div class="layer logo" style="${layerStyle(state.layout.frontLogo)}">${frontLogo}</div><p class="layer name" style="${layerStyle(state.layout.frontName)}"><strong>${data.firstName.toUpperCase()}</strong> ${data.lastName.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.frontTitle)}">${data.title}</p><p class="layer" style="${layerStyle(state.layout.frontEmail)}">${data.email}</p><p class="layer" style="${layerStyle(state.layout.frontPhone)}">${data.phone}</p><p class="layer" style="${layerStyle(state.layout.frontWebsite)}">${data.website}</p><p class="layer" style="${layerStyle(state.layout.frontAddress)}">${data.address}</p></div></div><div class="card-label">Front Side</div></div><div><div class="card"><div class="bg"><img src="${backBg}" alt=""/></div><div class="content"><div class="layer logo" style="${layerStyle(state.layout.backLogo)}">${logo}</div><p class="layer" style="${layerStyle(state.layout.backCompany)}">${data.company.toUpperCase()}</p><p class="layer" style="${layerStyle(state.layout.backTagline)}">${data.tagline}</p></div></div><div class="card-label">Back Side</div></div></body></html>`;
 }
 
@@ -332,40 +340,36 @@ function drawTextLayer(ctx, id, data, scale) {
 async function renderCanvases(data) {
   await document.fonts.ready;
   const width = 1140, height = 636, scale = width / CARD.width;
-  const [frontBg, backBg, logoImg] = await Promise.all([
+  const [frontBg, backBg, frontLogoImg, backLogoImg] = await Promise.all([
     loadImage(document.querySelector('#cardFront .am-card-bg-image')?.src || ''),
     loadImage(document.querySelector('#cardBack .am-card-bg-image')?.src || ''),
-    getLogoSrc() ? loadImage(getLogoSrc()) : Promise.resolve(null)
+    loadImage(getLogoSrc() || DEFAULT_LOGO_SRC),
+    loadImage(getLogoSrc() || DEFAULT_LOGO_SRC)
   ]);
   const front = document.createElement('canvas');
   front.width = width; front.height = height;
   const f = front.getContext('2d');
   f.drawImage(frontBg, 0, 0, width, height);
   const frontLogoCfg = state.layout.frontLogo;
-  if (logoImg) f.drawImage(logoImg, frontLogoCfg.x * scale, frontLogoCfg.y * scale, frontLogoCfg.width * scale, frontLogoCfg.height * scale);
+  f.drawImage(frontLogoImg, frontLogoCfg.x * scale, frontLogoCfg.y * scale, frontLogoCfg.width * scale, frontLogoCfg.height * scale);
   ['frontName', 'frontTitle', 'frontEmail', 'frontPhone', 'frontWebsite', 'frontAddress'].forEach(id => drawTextLayer(f, id, data, scale));
   const back = document.createElement('canvas');
   back.width = width; back.height = height;
   const b = back.getContext('2d');
   b.drawImage(backBg, 0, 0, width, height);
   const logoCfg = state.layout.backLogo;
-  if (logoImg) b.drawImage(logoImg, logoCfg.x * scale, logoCfg.y * scale, logoCfg.width * scale, logoCfg.height * scale);
+  b.drawImage(backLogoImg, logoCfg.x * scale, logoCfg.y * scale, logoCfg.width * scale, logoCfg.height * scale);
   drawTextLayer(b, 'backCompany', data, scale);
   drawTextLayer(b, 'backTagline', data, scale);
   return { front, back };
 }
-function buildPngSheet(front, back) {
-  const gap = 64;
-  const padding = 48;
-  const sheet = document.createElement('canvas');
-  sheet.width = front.width + padding * 2;
-  sheet.height = front.height + back.height + gap + padding * 2;
-  const ctx = sheet.getContext('2d');
-  ctx.fillStyle = '#F4F3F8';
-  ctx.fillRect(0, 0, sheet.width, sheet.height);
-  ctx.drawImage(front, padding, padding);
-  ctx.drawImage(back, padding, padding + front.height + gap);
-  return sheet;
+function downloadCanvas(canvas, name) {
+  const link = document.createElement('a');
+  link.href = canvas.toDataURL('image/png');
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 
 let drag = null;
@@ -479,14 +483,8 @@ els.btnDownload.addEventListener('click', async () => {
   els.btnDownload.disabled = true;
   try {
     const { front, back } = await renderCanvases(activeData());
-    const png = buildPngSheet(front, back);
-    const url = png.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${exportSlug()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    downloadCanvas(front, `${exportSlug()}-front.png`);
+    window.setTimeout(() => downloadCanvas(back, `${exportSlug()}-back.png`), 150);
   } catch (err) {
     console.error('PNG generation failed:', err);
     alert('PNG generation failed. Please try again.');
@@ -501,6 +499,7 @@ els.closePanel.addEventListener('click', () => {
 });
 
 document.body.classList.add('am-startup-active');
+applyEmbeddedBackgrounds();
 els.zoomSlider.value = 150;
 applyZoom(150);
 setActivePage('1');
