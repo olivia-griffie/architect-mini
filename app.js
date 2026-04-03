@@ -1,5 +1,4 @@
 const STORAGE_KEY = 'architect-mini-users';
-const STARTUP_WORDMARK = 'architect mini';
 const EMPTY_SAVED_OPTION = '<option value="">Choose a saved design</option>';
 const TEST_USERS = { admin: 'admin', client: 'client' };
 const CARD = { width: 380, height: 212 };
@@ -20,7 +19,6 @@ const state = { currentUser: null, hasUnsavedChanges: false, activeLayerId: 'fro
 const $ = id => document.getElementById(id);
 const els = {
   startupScreen: $('startupScreen'),
-  startupTypedText: $('startupTypedText'),
   loginForm: $('loginForm'),
   loginUsername: $('loginUsername'),
   loginPassword: $('loginPassword'),
@@ -109,20 +107,6 @@ function layerText(id, data) {
   return id === 'frontName' ? `${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()}` : map[id] || '';
 }
 
-function typeStartupWordmark() {
-  els.startupTypedText.textContent = '';
-  let i = 0;
-  const tick = () => {
-    els.startupTypedText.textContent = STARTUP_WORDMARK.slice(0, i);
-    i += 1;
-    if (i <= STARTUP_WORDMARK.length) {
-      window.setTimeout(tick, 75);
-    } else {
-      document.querySelector('.am-startup-caret')?.classList.add('am-startup-caret--done');
-    }
-  };
-  window.setTimeout(tick, 250);
-}
 function applyZoom(value) {
   els.cardWrapper.style.transform = `scale(${value / 100})`;
   els.zoomSlider.style.background = `linear-gradient(to right, var(--accent) ${value}%, var(--border) ${value}%)`;
@@ -461,4 +445,3 @@ updatePreviewText();
 applyAllLayers();
 renderSavedDesigns();
 validateName();
-typeStartupWordmark();
